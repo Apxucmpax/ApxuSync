@@ -12,27 +12,28 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DbController = void 0;
+exports.FileController = void 0;
 const common_1 = require("@nestjs/common");
-const db_service_1 = require("./db.service");
-let DbController = class DbController {
-    constructor(dbService) {
-        this.dbService = dbService;
+const file_service_1 = require("./file.service");
+const xlsx_to_prom_dto_1 = require("./dto/xlsx-to-prom.dto");
+let FileController = class FileController {
+    constructor(fileService) {
+        this.fileService = fileService;
     }
-    async findAll(data) {
-        return this.dbService.query(data.query);
+    async xlsxToProm(data) {
+        return await this.fileService.xlsxToProm(data);
     }
 };
 __decorate([
-    (0, common_1.Post)('query'),
+    (0, common_1.Post)('xlsx-to-prom'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [xlsx_to_prom_dto_1.XlsxToPromDto]),
     __metadata("design:returntype", Promise)
-], DbController.prototype, "findAll", null);
-DbController = __decorate([
-    (0, common_1.Controller)('db'),
-    __metadata("design:paramtypes", [db_service_1.DbService])
-], DbController);
-exports.DbController = DbController;
-//# sourceMappingURL=db.controller.js.map
+], FileController.prototype, "xlsxToProm", null);
+FileController = __decorate([
+    (0, common_1.Controller)('file'),
+    __metadata("design:paramtypes", [file_service_1.FileService])
+], FileController);
+exports.FileController = FileController;
+//# sourceMappingURL=file.controller.js.map

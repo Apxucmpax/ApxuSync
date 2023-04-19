@@ -4,5 +4,5 @@ export declare class DbController {
     constructor(dbService: DbService);
     findAll(data: {
         query: string;
-    }): Promise<unknown>;
+    }): Promise<any>;
 }

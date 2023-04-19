@@ -1,1 +1,1 @@
-{"version":3,"file":"compare-product.dto.js","sourceRoot":"","sources":["../../../src/product/dto/compare-product.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAkE;AAElE,MAAa,iBAAiB;CAM7B;AALC;IAAC,IAAA,yBAAO,GAAE;;mDACS;AAEnB;IAAC,IAAA,0BAAQ,GAAE;;6DACgB;AAL7B,8CAMC"}
+{"version":3,"file":"compare-product.dto.js","sourceRoot":"","sources":["../../../src/product/dto/compare-product.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAoD;AAEpD,MAAa,iBAAiB;CAM7B;AALC;IAAC,IAAA,yBAAO,GAAE;;mDACS;AAEnB;IAAC,IAAA,0BAAQ,GAAE;;6DACgB;AAL7B,8CAMC"}

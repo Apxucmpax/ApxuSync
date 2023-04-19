@@ -3,5 +3,5 @@ import { FirmService } from "./firm.service";
 export declare class FirmController {
     private readonly groupService;
     constructor(groupService: FirmService);
-    find(data: FindFirmDto): Promise<unknown>;
+    find(data: FindFirmDto): Promise<any>;
 }

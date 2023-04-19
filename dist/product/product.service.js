@@ -20,7 +20,7 @@ let ProductService = class ProductService {
         return await this.searchProductsByIds2(data.products, data.fieldNameForPromId);
     }
     async searchProductsByIds(ids, fieldNameForPromId) {
-        console.log(" searchProductsByIds: ");
+        console.log(' searchProductsByIds: ');
         const result = [];
         let step = 0;
         while (step < ids.length) {
@@ -32,8 +32,8 @@ let ProductService = class ProductService {
         return result;
     }
     async searchProductsByIdsStep(ids, fieldNameForPromId) {
-        console.log(" searchProductsByIdsStep: ");
-        const idsStr = ids.map(item => `'${item}'`).join(',');
+        console.log(' searchProductsByIdsStep: ');
+        const idsStr = ids.map((item) => `'${item}'`).join(',');
         return await this.dbService.query(`SELECT NUM, ${fieldNameForPromId} FROM TOVAR_NAME WHERE ${fieldNameForPromId} IN (${idsStr})`);
     }
     async searchProductsByIds2(ids, fieldNameForPromId) {
@@ -41,7 +41,7 @@ let ProductService = class ProductService {
         let step = 0;
         while (step < ids.length) {
             const idsStep = ids.slice(step, step + 100);
-            const idsStr = idsStep.map(item => `'${item}'`).join(',');
+            const idsStr = idsStep.map((item) => `'${item}'`).join(',');
             queries.push(`SELECT NUM, ${fieldNameForPromId} FROM TOVAR_NAME WHERE ${fieldNameForPromId} IN (${idsStr})`);
             step += 100;
         }
@@ -49,6 +49,9 @@ let ProductService = class ProductService {
     }
     async patch(data) {
         return await this.dbService.patchProducts(data);
+    }
+    async getAllProductsByPromId(data) {
+        return await this.dbService.query(`SELECT ${data.fieldNameForPromId}, ${data.fieldNameForMinWholeSaleQty}, ED_IZM, KOD, NAME, CENA_R, CENA_O, CENA_OUT_CURR_ID FROM TOVAR_NAME WHERE ${data.fieldNameForPromId} IS NOT NULL`);
     }
 };
 ProductService = __decorate([

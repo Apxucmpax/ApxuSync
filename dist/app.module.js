@@ -17,6 +17,7 @@ const product_module_1 = require("./product/product.module");
 const group_module_1 = require("./group/group.module");
 const store_module_1 = require("./store/store.module");
 const firm_module_1 = require("./firm/firm.module");
+const file_module_1 = require("./file/file.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -29,6 +30,7 @@ AppModule = __decorate([
             group_module_1.GroupModule,
             store_module_1.StoreModule,
             firm_module_1.FirmModule,
+            file_module_1.FileModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

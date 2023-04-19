@@ -1,1 +1,1 @@
-git pull && npm i
+git pull & pause

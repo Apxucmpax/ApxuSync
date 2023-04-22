@@ -17,10 +17,12 @@ let FileService = class FileService {
     constructor(productService) {
         this.productService = productService;
     }
-    async xlsxToProm({ fieldNameForPromId, fieldNameForMinWholeSaleQty, promProducts, currencyArr, }) {
+    async xlsxToProm({ fieldNameForPromId, fieldNameForMinWholeSaleQty, promProducts, currencyArr, storeId, firmId, }) {
         const products = await this.productService.getAllProductsByPromId({
             fieldNameForPromId,
             fieldNameForMinWholeSaleQty,
+            storeId,
+            firmId,
         });
         const productsObj = {};
         products.forEach((item) => {

@@ -21,5 +21,13 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CompareProductDto.prototype, "fieldNameForPromId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CompareProductDto.prototype, "storeId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CompareProductDto.prototype, "firmId", void 0);
 exports.CompareProductDto = CompareProductDto;
 //# sourceMappingURL=compare-product.dto.js.map

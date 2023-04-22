@@ -7,9 +7,7 @@ export declare class ProductService {
     private readonly dbService;
     constructor(dbService: DbService);
     compare(data: CompareProductDto): Promise<any[]>;
-    searchProductsByIds(ids: number[], fieldNameForPromId: string): Promise<any[]>;
-    searchProductsByIdsStep(ids: number[], fieldNameForPromId: string): Promise<any>;
-    searchProductsByIds2(ids: number[], fieldNameForPromId: string): Promise<any[]>;
+    searchProductsByIds2({ products, fieldNameForPromId, storeId, firmId, }: CompareProductDto): Promise<any[]>;
     patch(data: PatchProductDto): Promise<import("./dto/product.dto").ProductDto[]>;
     getAllProductsByPromId(data: ByPromIdProductDto): Promise<ResProductByPromIdDto[]>;
 }

@@ -21,5 +21,13 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], ByPromIdProductDto.prototype, "fieldNameForMinWholeSaleQty", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], ByPromIdProductDto.prototype, "storeId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], ByPromIdProductDto.prototype, "firmId", void 0);
 exports.ByPromIdProductDto = ByPromIdProductDto;
 //# sourceMappingURL=by-prom-id-product.dto.js.map

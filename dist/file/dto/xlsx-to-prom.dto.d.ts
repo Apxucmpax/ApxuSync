@@ -12,5 +12,7 @@ export declare class XlsxToPromDto {
     fieldNameForMinWholeSaleQty: string;
     promProducts: ProductDto[];
     currencyArr: 'UAH' | 'USD' | 'EUR'[];
+    storeId: number;
+    firmId: number;
 }
 export {};

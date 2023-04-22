@@ -59,5 +59,13 @@ __decorate([
     (0, class_validator_1.IsArray)(),
     __metadata("design:type", Object)
 ], XlsxToPromDto.prototype, "currencyArr", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], XlsxToPromDto.prototype, "storeId", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], XlsxToPromDto.prototype, "firmId", void 0);
 exports.XlsxToPromDto = XlsxToPromDto;
 //# sourceMappingURL=xlsx-to-prom.dto.js.map

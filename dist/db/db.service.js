@@ -42,6 +42,7 @@ let DbService = class DbService {
             return products;
         }
         catch (e) {
+            console.log('🚀 ~ file: db.service.ts:41 ~ DbService ~ query2 ~ e:', e);
             throw new common_1.GoneException(e);
         }
     }

@@ -32,7 +32,7 @@ let FileService = class FileService {
             return !!productsObj[item.id];
         });
         const unionProducts = filteredProducts.map((item) => {
-            return Object.assign(Object.assign(Object.assign({}, item), productsObj[item.id]), { type: 'u', presence: this.presenceTransform(item.presence), groupId: item.group.id, CENA_OUT_CURR_ID: currencyArr[productsObj[item.id].CENA_OUT_CURR_ID] });
+            return Object.assign(Object.assign(Object.assign({}, item), productsObj[item.id]), { type: 'r', presence: this.presenceTransform(item.presence), groupId: item.group.id, CENA_OUT_CURR_ID: currencyArr[productsObj[item.id].CENA_OUT_CURR_ID], [fieldNameForMinWholeSaleQty]: 0 });
         });
         const workbook = new exceljs_1.Workbook();
         const worksheet = workbook.addWorksheet('export');

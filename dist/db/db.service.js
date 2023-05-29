@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DbService = void 0;
 const common_1 = require("@nestjs/common");
 const Firebird = require("node-firebird");
+const factory_1 = require("./factory");
 let DbService = class DbService {
     constructor() {
         this.options = {
@@ -104,9 +105,15 @@ let DbService = class DbService {
             while (step < data.products.length) {
                 const prod = data.products[step];
                 const groupId = this.searchGroupByPromId(data.groups, prod.group.id);
+                query = `SELECT NUM FROM TOVAR_NAME WHERE ${data.fieldNameForPromId} = '${prod.id}'`;
+                const exist = await this.qWithoutDetach(db, query);
+                if (exist.length === 1) {
+                    query = `UPDATE TOVAR_NAME SET ${data.fieldNameForPromId} = null WHERE NUM = ${exist[0].NUM}`;
+                    await this.qWithoutDetach(db, query);
+                }
                 if (groupId === null)
                     throw new common_1.GoneException(`Group with name ${prod.group.name} not found`);
-                query = `SELECT NUM FROM TOVAR_NAME WHERE NAME = '${this.transformName(prod.name)}' AND TIP = ${groupId}`;
+                query = `SELECT tn.NUM FROM TOVAR_NAME tn, TOVAR_ZAL tz WHERE tn.NAME = '${this.transformName(prod.name)}' AND tn.TIP = ${groupId} AND tn.NUM = tz.TOVAR_ID AND tz.SKLAD_ID = ${data.storeId} AND tz.FIRMA_ID = ${data.firmId}`;
                 const num = await this.qWithoutDetach(db, query);
                 if (num.length === 1) {
                     query = `UPDATE TOVAR_NAME SET ${data.fieldNameForPromId} = '${prod.id}' WHERE NUM = ${num[0].NUM}`;
@@ -249,6 +256,94 @@ let DbService = class DbService {
         if (!currencyNum)
             return 0;
         return currencyNum;
+    }
+    async getOrder(nu) {
+        try {
+            const db = await this.connect();
+            let query = `SELECT * FROM SCHET WHERE NU = '${nu}'`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async createOrder({ order, orderSettings, storeId, firmId, clientId, }) {
+        try {
+            console.log('createOrder', order, orderSettings, storeId, firmId, clientId);
+            const db = await this.connect();
+            const data = factory_1.factory.createOrder(orderSettings, order);
+            let query = `INSERT INTO SCHET (FIRMA_ID, NU, CLIENT, CENA, CENA_PDV, CLIENT_ID, PAID, CURR_TYPE, CURR_CENA, CURR_CENA_PDV, SKLAD_ID, DOPOLN, DOC_USER_ID, IM_NUM, PDV_TYPE, CENA_ZNIG, PDV, ZNIG_TYPE, CURR_CENA_ZNIG, ZNIG_PROC, DATE_DOK, DOC_CREATE_TIME, DATE_REZERV_DELAY, DATE_PAY_DELAY, IS_REZERV, DOC_DESCR${factory_1.factory.createFields(data)}) VALUES (${firmId}, '${order.id}', '${order.fio}', ${order.price}, ${order.price}, ${clientId}, 0, 0, ${order.price}, ${order.price}, ${storeId}, '', 1, -1, 1, 0, 0, 0, 0, 0, CURRENT_DATE, CAST('${order.date_created}' AS TIMESTAMP), CURRENT_DATE, CURRENT_DATE, null, '${order.payment_option_name}'${factory_1.factory.createValues(data)}) RETURNING NUM`;
+            const num = await this.qWithoutDetach(db, query);
+            return num.NUM;
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async findClient({ email, phone }) {
+        try {
+            const db = await this.connect();
+            let info = '';
+            if (email)
+                info += `EMAIL = '${email}'`;
+            if (phone)
+                info += info ? ` OR TEL LIKE '${phone}'` : `TEL LIKE '${phone}'`;
+            let query = `SELECT NUM, ADR, ADR_UR, FIO, TEL FROM CLIENT WHERE ${info}`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async createClient({ firmId, fio, address, phone, email }) {
+        try {
+            const db = await this.connect();
+            let query = `INSERT INTO CLIENT (OUT, FIRMA, FIO, ADR, TEL, VISIBLE, PDV, EMAIL, TIP, MAIN_PID, ADR_UR, ZNIG_PROC, CLIENT_CENA_TYPE) VALUES (1, ${firmId}, '${fio || 'Покупатель'}', '${address}', '${phone}', 1, -1, '${email}', -10, -10, '${address}', 0, -1) RETURNING NUM`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async getProductNumById({ field, value, storeId, firmId, }) {
+        try {
+            const db = await this.connect();
+            let query = `SELECT tn.NUM FROM TOVAR_NAME tn, TOVAR_ZAL tz WHERE ${field} = '${value}' AND tn.NUM = tz.TOVAR_ID AND tz.SKLAD_ID = ${storeId} AND tz.FIRMA_ID = ${firmId}`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async createProduct({ fieldNameForPromId, name, measure_unit, groupId, price, prices, sku, currency, currencyObj, id, }) {
+        try {
+            const db = await this.connect();
+            let query = `INSERT INTO TOVAR_NAME (NAME, ED_IZM, TIP, CENA, VISIBLE, KOD, CENA_R, CENA_O, CENA_CURR_ID, CENA_OUT_CURR_ID, ${fieldNameForPromId}, DOC_CREATE_TIME, DOC_MODIFY_TIME) VALUES ('${this.transformName(name)}', '${measure_unit}', ${groupId}, ${price}, 1, '${sku}', ${price}, ${this.getWholesale(prices)}, ${this.checkCurrency(currency, currencyObj)}, ${this.checkCurrency(currency, currencyObj)}, '${id}', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) RETURNING NUM`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async createRowOrder({ PID, name, quantity, price, measure_unit, tovarId, skladId, sum, is_compl, }) {
+        try {
+            const db = await this.connect();
+            let query = `INSERT INTO SCHET_ (PID, TOV_NAME, TOV_KOLVO, TOV_CENA, TOV_ED, TOV_CENA_PDV, TOVAR_ID, CURR_TOV_CENA, CURR_TOV_CENA_PDV, SKLAD_ID, TOV_SUMA, CURR_TOV_SUMA, IS_PDV, IS_COMPL, TOV_SUMA_ZNIG, CURR_TOV_SUMA_ZNIG, COMPL_KOLVO_DEF) VALUES (${PID}, '${name}', ${quantity}, ${price}, '${measure_unit}', ${price}, ${tovarId}, ${price}, ${price}, ${skladId}, ${sum}, ${sum}, -1, ${is_compl}, 0, 0, 0)`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
+    }
+    async getComplProducts(id) {
+        try {
+            const db = await this.connect();
+            let query = `SELECT NUM FROM TOVAR_COMPL WHERE TOVAR_PID = ${id}`;
+            return await this.q(db, query);
+        }
+        catch (e) {
+            throw new common_1.GoneException(e);
+        }
     }
 };
 DbService = __decorate([

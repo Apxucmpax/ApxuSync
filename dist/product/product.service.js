@@ -36,6 +36,11 @@ let ProductService = class ProductService {
     async getAllProductsByPromId(data) {
         return await this.dbService.query(`SELECT tn.${data.fieldNameForPromId}, tn.${data.fieldNameForMinWholeSaleQty}, tn.ED_IZM, tn.KOD, tn.NAME, tn.CENA_R, tn.CENA_O, tn.CENA_OUT_CURR_ID FROM TOVAR_NAME tn, TOVAR_ZAL tz WHERE tn.${data.fieldNameForPromId} IS NOT NULL AND tn.NUM = tz.TOVAR_ID AND tz.SKLAD_ID = ${data.storeId} AND tz.FIRMA_ID = ${data.firmId}`);
     }
+    async getByProperty({ field, values }) {
+        return await this.dbService.query(`SELECT NUM, ${field} FROM TOVAR_NAME WHERE ${field} IN (${values
+            .map((item) => `'${item}'`)
+            .join(',')})`);
+    }
 };
 ProductService = __decorate([
     (0, common_1.Injectable)(),

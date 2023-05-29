@@ -27,6 +27,9 @@ let ProductController = class ProductController {
     async patch(data) {
         return this.productService.patch(data);
     }
+    async getByProperty(data) {
+        return this.productService.getByProperty(data);
+    }
 };
 __decorate([
     (0, common_1.Post)('compare'),
@@ -42,6 +45,13 @@ __decorate([
     __metadata("design:paramtypes", [patch_product_dto_1.PatchProductDto]),
     __metadata("design:returntype", Promise)
 ], ProductController.prototype, "patch", null);
+__decorate([
+    (0, common_1.Post)('get-by-property'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ProductController.prototype, "getByProperty", null);
 ProductController = __decorate([
     (0, common_1.Controller)('product'),
     __metadata("design:paramtypes", [product_service_1.ProductService])

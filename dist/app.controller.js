@@ -25,15 +25,21 @@ let AppController = class AppController {
         this.appService.staticFile(req, res);
     }
     fileManager(file, res) {
-        return res.sendFile(file, { root: "client" });
+        console.log('filepath');
+        const f = res.sendFile(file, { root: 'client' });
+        console.log(f);
+        if (f) {
+            return f;
+        }
+        return res.redirect('/');
     }
     main(res) {
-        const file = (0, fs_1.createReadStream)((0, path_1.join)(process.cwd(), "client/index.html"));
+        const file = (0, fs_1.createReadStream)((0, path_1.join)(process.cwd(), 'client/index.html'));
         file.pipe(res);
     }
 };
 __decorate([
-    (0, common_1.Get)("static/*"),
+    (0, common_1.Get)('static/*'),
     __param(0, (0, common_1.Req)()),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
@@ -41,8 +47,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "staticFile", null);
 __decorate([
-    (0, common_1.Get)(":filepath"),
-    __param(0, (0, common_1.Param)("filepath")),
+    (0, common_1.Get)(':filepath'),
+    __param(0, (0, common_1.Param)('filepath')),
     __param(1, (0, common_1.Res)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Object]),

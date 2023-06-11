@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.parsingPrice = void 0;
 const parsingPrice = (price) => {
     return price
+        .replace(' ₴', '')
         .replace(' грн.', '')
         .replace(' грн', '')
         .replace(',', '.')

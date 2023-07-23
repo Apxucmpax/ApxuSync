@@ -17,6 +17,7 @@ let OrderService = class OrderService {
         this.dbService = dbService;
     }
     async create(data) {
+        var _a;
         for (const order of data.orders) {
             const exist = await this.dbService.getOrder(order.id);
             if (exist.length)
@@ -41,7 +42,7 @@ let OrderService = class OrderService {
             const PID = await this.dbService.createOrder({
                 order,
                 storeId: data.storeId,
-                firmId: data.firmId,
+                firmId: ((_a = data === null || data === void 0 ? void 0 : data.orderSettings) === null || _a === void 0 ? void 0 : _a.firmForOrder) || data.firmId,
                 orderSettings: data.orderSettings,
                 clientId: order.clientId,
             });

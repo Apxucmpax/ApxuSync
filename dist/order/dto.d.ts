@@ -44,5 +44,10 @@ export declare class OrderSettings {
         save: boolean;
         fieldName: string;
     };
+    numbering?: {
+        custom: boolean;
+        template: string;
+    };
+    firmForOrder?: number;
 }
 export {};

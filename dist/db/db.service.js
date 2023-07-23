@@ -268,12 +268,22 @@ let DbService = class DbService {
         }
     }
     async createOrder({ order, orderSettings, storeId, firmId, clientId, }) {
+        var _a;
         try {
-            console.log('createOrder', order, orderSettings, storeId, firmId, clientId);
             const db = await this.connect();
+            let queryForMaxValue = `SELECT NU
+        FROM SCHET
+        ORDER BY NUM DESC
+        ROWS 1;`;
+            const nu = await this.qWithoutDetach(db, queryForMaxValue);
+            const maxValue = !nu.length
+                ? 0
+                : /^\d+$/.test((_a = nu[0]) === null || _a === void 0 ? void 0 : _a.NU)
+                    ? +nu[0].NU + 1
+                    : 0;
             const data = factory_1.factory.createOrder(orderSettings, order);
-            let query = `INSERT INTO SCHET (FIRMA_ID, NU, CLIENT, CENA, CENA_PDV, CLIENT_ID, PAID, CURR_TYPE, CURR_CENA, CURR_CENA_PDV, SKLAD_ID, DOPOLN, DOC_USER_ID, IM_NUM, PDV_TYPE, CENA_ZNIG, PDV, ZNIG_TYPE, CURR_CENA_ZNIG, ZNIG_PROC, DATE_DOK, DOC_CREATE_TIME, DATE_REZERV_DELAY, DATE_PAY_DELAY, IS_REZERV, DOC_DESCR${factory_1.factory.createFields(data)}) VALUES (${firmId}, '${order.id}', '${order.fio}', ${order.price}, ${order.price}, ${clientId}, 0, 0, ${order.price}, ${order.price}, ${storeId}, '', 1, -1, 1, 0, 0, 0, 0, 0, CURRENT_DATE, CAST('${order.date_created}' AS TIMESTAMP), CURRENT_DATE, CURRENT_DATE, null, '${order.payment_option_name}'${factory_1.factory.createValues(data)}) RETURNING NUM`;
-            const num = await this.qWithoutDetach(db, query);
+            let query = `INSERT INTO SCHET (FIRMA_ID, NU, CLIENT, CENA, CENA_PDV, CLIENT_ID, PAID, CURR_TYPE, CURR_CENA, CURR_CENA_PDV, SKLAD_ID, DOPOLN, DOC_USER_ID, IM_NUM, PDV_TYPE, CENA_ZNIG, PDV, ZNIG_TYPE, CURR_CENA_ZNIG, ZNIG_PROC, DATE_DOK, DOC_CREATE_TIME, DATE_REZERV_DELAY, DATE_PAY_DELAY, IS_REZERV, DOC_DESCR, DOC_LAST_USER_ID${factory_1.factory.createFields(data)}) VALUES (${firmId}, '${maxValue}', '${order.fio}', ${order.price}, ${order.price}, ${clientId}, 0, 0, ${order.price}, ${order.price}, ${storeId}, '', 1, -1, 1, 0, 0, 0, 0, 0, CURRENT_DATE, CAST('${order.date_created}' AS TIMESTAMP), CURRENT_DATE, CURRENT_DATE, 0, '${order.payment_option_name}', 1${factory_1.factory.createValues(data)}) RETURNING NUM`;
+            const num = await this.q(db, query);
             return num.NUM;
         }
         catch (e) {
